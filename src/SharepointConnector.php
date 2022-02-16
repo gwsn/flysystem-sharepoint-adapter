@@ -11,9 +11,9 @@ class SharepointConnector
 {
     private string $accessToken;
 
-    public DriveService $drive;
-    public FileService $file;
-    public FolderService $folder;
+    private DriveService $drive;
+    private FileService $file;
+    private FolderService $folder;
 
     public function __construct(
         string $tenantId,
@@ -58,5 +58,58 @@ class SharepointConnector
         return $this;
     }
 
+    /**
+     * @return DriveService
+     */
+    public function getDrive(): DriveService
+    {
+        return $this->drive;
+    }
+
+    /**
+     * @param DriveService $drive
+     * @return SharepointConnector
+     */
+    public function setDrive(DriveService $drive): SharepointConnector
+    {
+        $this->drive = $drive;
+        return $this;
+    }
+
+    /**
+     * @return FileService
+     */
+    public function getFile(): FileService
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param FileService $file
+     * @return SharepointConnector
+     */
+    public function setFile(FileService $file): SharepointConnector
+    {
+        $this->file = $file;
+        return $this;
+    }
+
+    /**
+     * @return FolderService
+     */
+    public function getFolder(): FolderService
+    {
+        return $this->folder;
+    }
+
+    /**
+     * @param FolderService $folder
+     * @return SharepointConnector
+     */
+    public function setFolder(FolderService $folder): SharepointConnector
+    {
+        $this->folder = $folder;
+        return $this;
+    }
 
 }

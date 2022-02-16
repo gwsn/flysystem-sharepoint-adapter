@@ -64,7 +64,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function fileExists(string $path): bool
     {
-        return $this->connector->file->checkFileExists($this->applyPrefix($path));
+        return $this->connector->getFile()->checkFileExists($this->applyPrefix($path));
     }
 
     /**
@@ -74,7 +74,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function directoryExists(string $path): bool
     {
-        return $this->connector->folder->checkFolderExists($this->applyPrefix($path));
+        return $this->connector->getFolder()->checkFolderExists($this->applyPrefix($path));
     }
 
     /**
@@ -86,9 +86,9 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function write(string $path, string $contents, Config $config): void
     {
-        $mimeType = (isset($config['mimeType']) ? $config['mimeType'] : 'text/plain');
+        $mimeType = $config->get('mimeType', 'text/plain');
 
-        $this->connector->file->writeFile($this->applyPrefix($path), $contents, $mimeType);
+        $this->connector->getFile()->writeFile($this->applyPrefix($path), $contents, $mimeType);
     }
 
     /**
@@ -110,7 +110,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function read(string $path): string
     {
-        return $this->connector->file->readFile($this->applyPrefix($path));
+        return $this->connector->getFile()->readFile($this->applyPrefix($path));
     }
 
     /**
@@ -130,7 +130,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function delete(string $path): void
     {
-        $this->connector->file->deleteFile($this->applyPrefix($path));
+        $this->connector->getFile()->deleteFile($this->applyPrefix($path));
     }
 
     /**
@@ -140,7 +140,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function deleteDirectory(string $path): void
     {
-        $this->connector->folder->deleteFolder($this->applyPrefix($path));
+        $this->connector->getFolder()->deleteFolder($this->applyPrefix($path));
     }
 
     /**
@@ -151,7 +151,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function createDirectory(string $path, Config $config): void
     {
-        $this->connector->folder->createFolderRecursive($this->applyPrefix($path));
+        $this->connector->getFolder()->createFolderRecursive($this->applyPrefix($path));
     }
 
     /**
@@ -182,7 +182,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function mimeType(string $path): FileAttributes
     {
-        $this->connector->file->checkFileMimeType($this->applyPrefix($path));
+        $this->connector->getFile()->checkFileMimeType($this->applyPrefix($path));
     }
 
     /**
@@ -192,7 +192,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function lastModified(string $path): FileAttributes
     {
-        $this->connector->file->checkFileLastModified($this->applyPrefix($path));
+        $this->connector->getFile()->checkFileLastModified($this->applyPrefix($path));
     }
 
     /**
@@ -202,7 +202,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function fileSize(string $path): FileAttributes
     {
-        $this->connector->file->checkFileSize($this->applyPrefix($path));
+        $this->connector->getFile()->checkFileSize($this->applyPrefix($path));
     }
 
     /**
@@ -213,7 +213,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function listContents(string $path, bool $deep): iterable
     {
-        return $this->connector->folder->requestFolderItems($this->applyPrefix($path));
+        return $this->connector->getFolder()->requestFolderItems($this->applyPrefix($path));
     }
 
     /**
@@ -231,7 +231,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
         // Create parent folders if not exists
         $parentFolder = sprintf('/%s', ltrim(implode('/', $parent), '/'));
 
-        $this->connector->file->moveFile($this->applyPrefix($source), $this->applyPrefix($parentFolder), $fileName);
+        $this->connector->getFile()->moveFile($this->applyPrefix($source), $this->applyPrefix($parentFolder), $fileName);
     }
 
     /**
@@ -249,7 +249,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
         // Create parent folders if not exists
         $parentFolder = sprintf('/%s', ltrim(implode('/', $parent), '/'));
 
-        $this->connector->file->copyFile($this->applyPrefix($source), $this->applyPrefix($parentFolder), $fileName);
+        $this->connector->getFile()->copyFile($this->applyPrefix($source), $this->applyPrefix($parentFolder), $fileName);
     }
     
     private function applyPrefix(string $path): string {
