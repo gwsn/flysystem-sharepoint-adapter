@@ -2,6 +2,7 @@
 namespace GWSN\FlysystemSharepoint;
 
 use League\Flysystem\Config;
+use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
@@ -213,7 +214,21 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function listContents(string $path, bool $deep): iterable
     {
-        return $this->connector->getFolder()->requestFolderItems($this->applyPrefix($path));
+        $content = [];
+        $result = $this->connector->getFolder()->requestFolderItems($this->applyPrefix($path));
+
+        if(count($result) > 0) {
+            foreach($result as $value) {
+                if(isset($value['folder'])) {
+                    $content[] = new DirectoryAttributes($value['name'], 'notSupported', (new \DateTime($value['lastModifiedDateTime']))->getTimestamp(), $value);
+                }
+                if(isset($value['file'])) {
+                    $content[] = new FileAttributes($value['name'], $value['size'], 'notSupported', (new \DateTime($value['lastModifiedDateTime']))->getTimestamp(), $value['file']['mimeType'], $value);
+                }
+            }
+        }
+
+        return $content;
     }
 
     /**
