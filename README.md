@@ -44,8 +44,8 @@ You need to request a new clientId and clientSecret for a new application on Azu
    
 
 ``` php
-use GWSN\Sharepoint\FlysystemSharepointAdapter;
-use GWSN\Sharepoint\SharepointConnector;
+use GWSN\FlysystemSharepoint\FlysystemSharepointAdapter;
+use GWSN\FlysystemSharepoint\SharepointConnector;
 use League\Flysystem\Filesystem;
 
 $tenantId = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
