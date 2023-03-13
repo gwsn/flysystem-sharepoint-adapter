@@ -268,6 +268,9 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
     }
     
     private function applyPrefix(string $path): string {
+        if($path === '' || $path === '/'){
+            return $this->getPrefix();
+        }
         return sprintf('%s/%s', $this->getPrefix(), ltrim($path));
     }
 }
