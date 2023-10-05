@@ -121,7 +121,16 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function readStream(string $path)
     {
-        // TODO: Implement readStream() method.
+        $path = $this->applyPrefix($path);
+        /** @var resource $readStream */
+        $readStream = fopen($this->connector->getFile()->requestFileStreamUrl($path), 'rb');
+
+        if (! $readStream) {
+            fclose($readStream);
+            throw UnableToReadFile::fromLocation($path);
+        }
+
+        return $readStream;
     }
 
     /**
@@ -183,7 +192,19 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function mimeType(string $path): FileAttributes
     {
-        $this->connector->getFile()->checkFileMimeType($this->applyPrefix($path));
+        $path = $this->applyPrefix($path);
+
+        try {
+            $mimetype = $this->connector->getFile()->checkFileMimeType($path);
+        } catch (Throwable $exception) {
+            throw UnableToRetrieveMetadata::mimeType($path, $exception->getMessage(), $exception);
+        }
+
+        if ($mimetype === null) {
+            throw UnableToRetrieveMetadata::mimeType($path, 'Unknown.');
+        }
+
+        return new FileAttributes($path, null, null, null, $mimetype);
     }
 
     /**
@@ -203,7 +224,19 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function fileSize(string $path): FileAttributes
     {
-        $this->connector->getFile()->checkFileSize($this->applyPrefix($path));
+        $path = $this->applyPrefix($path);
+
+        try {
+            $fileSize = $this->connector->getFile()->checkFileSize($this->applyPrefix($path));
+        } catch (Throwable $exception) {
+            throw UnableToRetrieveMetadata::fileSize($path, $exception->getMessage(), $exception);
+        }
+
+        if ($fileSize === null) {
+            throw UnableToRetrieveMetadata::fileSize($path, 'Unknown.');
+        }
+
+        return new FileAttributes($path, $fileSize);
     }
 
     /**
