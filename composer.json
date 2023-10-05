@@ -16,7 +16,7 @@
   "require": {
     "php": "^7.4 || ^8.0",
     "ext-json": "*",
-    "gwsn/sharepoint-sdk": "^1.0",
+    "gwsn/sharepoint-sdk": "^1.0|dev-feature/retrieve-all-items",
     "league/flysystem": "^3.0"
   },
   "require-dev": {
