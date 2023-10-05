@@ -121,7 +121,16 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function readStream(string $path)
     {
-        // TODO: Implement readStream() method.
+        $path = $this->applyPrefix($path);
+        /** @var resource $readStream */
+        $readStream = fopen($this->connector->getFile()->requestFileStreamUrl($path), 'rb');
+
+        if (! $readStream) {
+            fclose($readStream);
+            throw UnableToReadFile::fromLocation($path);
+        }
+
+        return $readStream;
     }
 
     /**
