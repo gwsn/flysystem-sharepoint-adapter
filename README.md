@@ -17,7 +17,7 @@ composer require gwsn/flysystem-sharepoint-adapter
 You need to request a new clientId and clientSecret for a new application on Azure.
 
 1. Go to `Azure portal` https://portal.azure.com
-2. Go to `Active Directory`
+2. Go to `Azure Active Directory`
 3. Go to `App registrations`
 4. Click on `new Registration` and follow the wizard.  
   (give it a name like mine is 'gwsn-sharepoint-connector' and make a decision on the supported accounts, single tenant should be enough but this depends on your organisation)
