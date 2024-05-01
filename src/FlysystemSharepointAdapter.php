@@ -6,6 +6,9 @@ use League\Flysystem\DirectoryAttributes;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToRetrieveMetadata;
+use Throwable;
 
 class FlysystemSharepointAdapter implements FilesystemAdapter
 {
@@ -204,7 +207,10 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
             throw UnableToRetrieveMetadata::mimeType($path, 'Unknown.');
         }
 
-        return new FileAttributes($path, null, null, null, $mimetype);
+        return new FileAttributes(
+            path: $path,
+            mimeType: $mimetype
+        );
     }
 
     /**
@@ -214,7 +220,22 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
      */
     public function lastModified(string $path): FileAttributes
     {
-        $this->connector->getFile()->checkFileLastModified($this->applyPrefix($path));
+        $path = $this->applyPrefix($path);
+
+        try {
+            $lastModified = $this->connector->getFile()->checkFileLastModified($path);
+        } catch (Throwable $exception) {
+            throw UnableToRetrieveMetadata::lastModified($path, $exception->getMessage(), $exception);
+        }
+
+        if ($lastModified === null) {
+            throw UnableToRetrieveMetadata::lastModified($path, 'Unknown.');
+        }
+
+        return new FileAttributes(
+            path: $path,
+            lastModified: $lastModified
+        );
     }
 
     /**
@@ -227,7 +248,7 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
         $path = $this->applyPrefix($path);
 
         try {
-            $fileSize = $this->connector->getFile()->checkFileSize($this->applyPrefix($path));
+            $fileSize = $this->connector->getFile()->checkFileSize($path);
         } catch (Throwable $exception) {
             throw UnableToRetrieveMetadata::fileSize($path, $exception->getMessage(), $exception);
         }
@@ -236,7 +257,10 @@ class FlysystemSharepointAdapter implements FilesystemAdapter
             throw UnableToRetrieveMetadata::fileSize($path, 'Unknown.');
         }
 
-        return new FileAttributes($path, $fileSize);
+        return new FileAttributes(
+            path: $path,
+            fileSize: $fileSize
+        );
     }
 
     /**
